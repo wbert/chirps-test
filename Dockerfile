@@ -1,4 +1,4 @@
-## ─────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # Stage 1: PHP dependencies (Composer)
 # ─────────────────────────────────────────────
 FROM composer:2.7 AS composer
@@ -33,7 +33,7 @@ RUN npm run build
 # ─────────────────────────────────────────────
 # Stage 3: Final production image
 # ─────────────────────────────────────────────
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 LABEL maintainer="you@example.com"
 
@@ -82,8 +82,8 @@ COPY --chown=www-data:www-data --from=composer /app/vendor ./vendor
 COPY --chown=www-data:www-data --from=node /app/public/build ./public/build
 
 # ── Bootstrap ────────────────────────────────
-COPY docker/entrypoint.sh /start.sh
-RUN chmod +x /start.sh \
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh \
     && mkdir -p storage/logs storage/framework/{sessions,views,cache} bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
@@ -92,4 +92,4 @@ RUN chmod +x /start.sh \
 ENV PORT=10000
 EXPOSE ${PORT}
 
-CMD ["/start.sh"]
+CMD ["/entrypoint.sh"]
