@@ -3,8 +3,8 @@
 # ─────────────────────────────────────────────
 FROM php:8.4-cli-alpine AS composer
 
-# Install git + unzip (needed by composer) and the Composer binary
-RUN apk add --no-cache git unzip \
+# Install git + unzip + curl (needed by composer) and the Composer binary
+RUN apk add --no-cache git unzip curl \
     && curl -sS https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin --filename=composer
 
@@ -13,12 +13,21 @@ WORKDIR /app
 # Copy full source first so Composer can scan all classes
 COPY . .
 
+# Extensions (gd/intl/zip/pdo_mysql/etc.) are installed in the final stage.
+# Skip platform-extension checks here since we're only resolving/downloading.
 RUN composer install \
     --no-dev \
     --no-interaction \
     --no-scripts \
     --prefer-dist \
-    --optimize-autoloader
+    --optimize-autoloader \
+    --ignore-platform-req=ext-gd \
+    --ignore-platform-req=ext-intl \
+    --ignore-platform-req=ext-zip \
+    --ignore-platform-req=ext-pdo_mysql \
+    --ignore-platform-req=ext-bcmath \
+    --ignore-platform-req=ext-exif \
+    --ignore-platform-req=ext-pcntl
 
 # ─────────────────────────────────────────────
 # Stage 2: Node.js assets (Vite / Mix)
@@ -47,6 +56,7 @@ RUN apk add --no-cache \
     nginx \
     supervisor \
     curl \
+    gettext \
     libpng-dev \
     libjpeg-turbo-dev \
     libwebp-dev \
