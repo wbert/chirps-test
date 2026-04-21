@@ -64,12 +64,15 @@ RUN apk add --no-cache \
     libzip-dev \
     oniguruma-dev \
     icu-dev \
+    postgresql-dev \
     && docker-php-ext-configure gd \
     --with-freetype \
     --with-jpeg \
     --with-webp \
     && docker-php-ext-install -j$(nproc) \
     pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     mbstring \
     exif \
     pcntl \
@@ -77,7 +80,8 @@ RUN apk add --no-cache \
     gd \
     zip \
     intl \
-    opcache
+    opcache \
+    && docker-php-ext-enable pdo_pgsql pgsql
 
 # ── PHP configuration ────────────────────────
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/laravel.ini
