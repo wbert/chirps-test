@@ -81,8 +81,8 @@ COPY --from=composer /app /var/www/html
 COPY --from=node /app/public/build /var/www/html/public/build
 
 # Copy configuration files
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
+COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Set permissions
