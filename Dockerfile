@@ -1,7 +1,12 @@
 # ─────────────────────────────────────────────
 # Stage 1: PHP dependencies (Composer)
 # ─────────────────────────────────────────────
-FROM composer:2.7 AS composer
+FROM php:8.4-cli-alpine AS composer
+
+# Install git + unzip (needed by composer) and the Composer binary
+RUN apk add --no-cache git unzip \
+    && curl -sS https://getcomposer.org/installer | php -- \
+        --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /app
 
